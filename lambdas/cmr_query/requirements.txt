@@ -1,0 +1,5 @@
+python-cmr
+geojson-pydantic
+aws-lambda-powertools
+pydantic[email]
+boto3
