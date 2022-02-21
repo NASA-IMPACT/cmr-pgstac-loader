@@ -36,10 +36,19 @@ class Stack(core.Stack):
             bucket_name=f"{stack_name}-ndjson",
         )
 
+        self.item_dlq = sqs.Queue(
+            self,
+            "ItemDLQ",
+            retention_period=core.Duration.days(14),
+        )
         self.item_queue = sqs.Queue(
             self,
             "ItemQueue",
             visibility_timeout=core.Duration.minutes(1),
+            dead_letter_queue=sqs.DeadLetterQueue(
+                max_receive_count=3,
+                queue=self.item_dlq,
+            ),
         )
         self.item_queue.grant_send_messages(self.cmr_query_role)
 
@@ -73,10 +82,19 @@ class Stack(core.Stack):
         self.item_queue.grant_consume_messages(self.build_ndjson_role)
         self.bucket.grant_write(self.build_ndjson_role)
 
+        self.ndjson_dlq = sqs.Queue(
+            self,
+            "NDJsonDLQ",
+            retention_period=core.Duration.days(14),
+        )
         self.ndjson_queue = sqs.Queue(
             self,
             "NDJsonQueue",
             visibility_timeout=core.Duration.minutes(15),
+            dead_letter_queue=sqs.DeadLetterQueue(
+                max_receive_count=3,
+                queue=self.ndjson_dlq,
+            ),
         )
         self.ndjson_queue.grant_send_messages(self.build_ndjson_role)
         self.build_ndjson_function = aws_lambda.Function(
