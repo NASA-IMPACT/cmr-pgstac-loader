@@ -1,4 +1,3 @@
 pypgstac
 boto3
 aws-lambda-powertools
-pypgstac
