@@ -83,6 +83,15 @@ class Stack(core.Stack):
         self.build_ndjson_role.add_to_policy(
             iam.PolicyStatement(actions=["sts:AssumeRole"], resources=[ROLE_ARN])
         )
+        self.item_queue.add_to_resource_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "sqs:*",
+                ],
+                resources=[self.item_queue.queue_arn],
+                principals=[iam.AccountPrincipal(ROLE_ARN.split(":")[4])],
+            )
+        )
         self.item_queue.grant_consume_messages(self.build_ndjson_role)
         self.bucket.grant_write(self.build_ndjson_role)
 
