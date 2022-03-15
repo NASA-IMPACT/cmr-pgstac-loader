@@ -13,6 +13,7 @@ from aws_cdk.aws_lambda_event_sources import SqsEventSource
 STACKNAME = os.environ["STACKNAME"]
 PROJECT = os.environ["PROJECT"]
 SECRET_NAME = os.environ["SECRET_NAME"]
+ROLE_ARN = os.environ["ROLE_ARN"]
 
 
 class Stack(core.Stack):
@@ -79,6 +80,18 @@ class Stack(core.Stack):
                 )
             ],
         )
+        self.build_ndjson_role.add_to_policy(
+            iam.PolicyStatement(actions=["sts:AssumeRole"], resources=[ROLE_ARN])
+        )
+        self.item_queue.add_to_resource_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "sqs:*",
+                ],
+                resources=[self.item_queue.queue_arn],
+                principals=[iam.AccountPrincipal(ROLE_ARN.split(":")[4])],
+            )
+        )
         self.item_queue.grant_consume_messages(self.build_ndjson_role)
         self.bucket.grant_write(self.build_ndjson_role)
 
@@ -113,6 +126,7 @@ class Stack(core.Stack):
             environment={
                 "BUCKET": self.bucket.bucket_name,
                 "QUEUE_URL": self.ndjson_queue.queue_url,
+                "ROLE_ARN": ROLE_ARN,
             },
         )
 

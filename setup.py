@@ -19,8 +19,9 @@ inst_reqs = [
 inst_reqs.append([f"aws_cdk.{x}=={aws_cdk_version}" for x in aws_cdk_reqs])
 
 extra_reqs = {
-    "test": ["pytest", "pytest-cov", "black", "flake8"],
+    "test": ["pytest", "pytest-cov", "black", "flake8", "asynctest"],
     "dev": [
+        "asynctest",
         "pytest",
         "black",
         "flake8",

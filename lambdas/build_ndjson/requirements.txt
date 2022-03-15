@@ -1,4 +1,6 @@
 smart-open
+botocore==1.23.24
+aiobotocore==2.1.2
 aiohttp
 aws-lambda-powertools
 pydantic[email]
