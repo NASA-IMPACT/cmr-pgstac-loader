@@ -1,6 +1,8 @@
 # cmr-pgstac-loader
-AWS stack to query HLS granules from CMR and load their STAC metadata into a pgstac instance.
+AWS stack to ingest HLS STAC metadata into a pgstac instance with batched streaming.
+Also includes utilities to query CMR to ingest a subset of HLS granules.
 
+![architecture](docs/architecture.png)
 
 ## Requirements
 - Python==3.8
